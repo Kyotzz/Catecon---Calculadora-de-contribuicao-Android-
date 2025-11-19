@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,9 +48,126 @@ public class MainActivity extends AppCompatActivity {
         calcular.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calculoDias();
+                if (!validarCamposVazios()) {
+                    return;
+                }
+                if(validarValores()){
+                    calculoDias();
+                }else{
+                    Toast.makeText(MainActivity.this, "Verifique os erros nos campos em vermelho", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
+        limpar.setOnClickListener(v -> {
+            diaIn.setText(""); mesIn.setText(""); anoIn.setText("");
+            diaFn.setText(""); mesFn.setText(""); anoFn.setText("");
+            resultado.setText("Resultado:");
+        });
+    }
+
+    private boolean validarCamposVazios() {
+        // Validação Dia Inicial
+        // .trim() remove espaços em branco (caso o usuário digite só espaços)
+        if (diaIn.getText().toString().trim().isEmpty()) {
+            diaIn.setError("Preencha o dia inicial");
+            diaIn.requestFocus(); // Leva o cursor para este campo
+            return false; // Retorna falso e para a verificação aqui
+        }
+
+        // Validação Mês Inicial
+        if (mesIn.getText().toString().trim().isEmpty()) {
+            mesIn.setError("Preencha o mês inicial");
+            mesIn.requestFocus();
+            return false;
+        }
+
+        // Validação Ano Inicial
+        if (anoIn.getText().toString().trim().isEmpty()) {
+            anoIn.setError("Preencha o ano inicial");
+            anoIn.requestFocus();
+            return false;
+        }
+
+        // Validação Dia Final
+        if (diaFn.getText().toString().trim().isEmpty()) {
+            diaFn.setError("Preencha o dia final");
+            diaFn.requestFocus();
+            return false;
+        }
+
+        // Validação Mês Final
+        if (mesFn.getText().toString().trim().isEmpty()) {
+            mesFn.setError("Preencha o mês final");
+            mesFn.requestFocus();
+            return false;
+        }
+
+        // Validação Ano Final
+        if (anoFn.getText().toString().trim().isEmpty()) {
+            anoFn.setError("Preencha o ano final");
+            anoFn.requestFocus();
+            return false;
+        }
+
+        // Se chegou até aqui, todos os campos tem texto
+        return true;
+    }
+
+    // Método que valida a lógica (intervalo de números)
+    private boolean validarValores() {
+        // Convertendo para inteiros para poder comparar
+        int dIn = Integer.parseInt(diaIn.getText().toString());
+        int mIn = Integer.parseInt(mesIn.getText().toString());
+        int aIn = Integer.parseInt(anoIn.getText().toString());
+
+        int dFn = Integer.parseInt(diaFn.getText().toString());
+        int mFn = Integer.parseInt(mesFn.getText().toString());
+        int aFn = Integer.parseInt(anoFn.getText().toString());
+
+        boolean temErro = false;
+
+        // Validação do DIA Inicial (Python: while dia > 31 or dia <= 0)
+        if (dIn > 31 || dIn <= 0) {
+            diaIn.setError("Dia inválido (1-31)");
+            temErro = true;
+        }
+
+        // Validação do MÊS Inicial (Python: while mes > 12 or mes <= 0)
+        if (mIn > 12 || mIn <= 0) {
+            mesIn.setError("Mês inválido (1-12)");
+            temErro = true;
+        }
+
+        // Validação do ANO Inicial (Python: while ano < 1971 or ano > 2025)
+        if (aIn < 1971 || aIn > 2025) {
+            anoIn.setError("Ano deve ser entre 1971 e 2025");
+            temErro = true;
+        }
+
+        // Validação do DIA Final
+        if (dFn > 31 || dFn <= 0) {
+            diaFn.setError("Dia inválido");
+            temErro = true;
+        }
+
+        // Validação do MÊS Final
+        if (mFn > 12 || mFn <= 0) {
+            mesFn.setError("Mês inválido");
+            temErro = true;
+        }
+
+        // Validação do ANO Final (Python: while anofn < anoin or anofn > 2025)
+        if (aFn < aIn) {
+            anoFn.setError("Ano final não pode ser menor que o inicial");
+            temErro = true;
+        } else if (aFn > 2025) {
+            anoFn.setError("Ano máximo é 2025");
+            temErro = true;
+        }
+
+        // Se encontrou QUALQUER erro (temErro = true), retorna false para não deixar calcular
+        return !temErro;
     }
     public int diasAnosInteiros(){
         int anoInicial = Integer.parseInt(anoIn.getText().toString());
@@ -84,7 +202,6 @@ public class MainActivity extends AppCompatActivity {
 
         return somaDias;
     }
-
 
     //Método para calcular os dias trabalhados do ano inicial
     public int diasAnoInicial(){
