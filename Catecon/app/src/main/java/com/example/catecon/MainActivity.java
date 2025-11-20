@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         double dias = (meses-mesesInt)*30;
         int diass = (int)dias;
 
-        resultado.setText("Resultado: "+anoss+" anos, "+mesesInt+" meses e "+Math.round(dias)+" dias");
+        resultado.setText("Resultado: "+anoss+" anos, "+mesesInt+" meses e "+Math.round(dias)+" dias"+"\n[Dias Totais: "+(int)totalDias+"]");
 
 
 
